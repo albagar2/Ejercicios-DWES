@@ -38,6 +38,4 @@
 ?>
      esto sobre la cookie nos ha dicho que probemos con un ejemplo durante un año y que cada vex 
      que el usuario se conecte le muestre un mensaje con la ultima conexion
-        // md5 --> Vulnerable a ataques de fuerza bruta y tablas rainbow.
-    // password_bcrypt --> Incluye automáticamente un salt único → evita que dos contraseñas iguales tengan el mismo hash.
-    // Usa siempre password_hash() con BCRYPT o ARGON2
+        

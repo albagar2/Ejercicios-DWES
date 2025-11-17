@@ -4,24 +4,31 @@
     include './funciones.php';
     $conex = conectarBBDD();
     
+    // echo 'Entre a la conexion de bbdd <p>';
     if (isset($_POST["entrar"])){
         $password = md5($_POST["pass"]);
         
-        $result = $conex->prepare("Select * from usuario where Email=?");
-        $result->bindParam("s", $_POST["email"]);
-        $result->execute();
+        $sql = $conex->prepare("Select * from usuario where Email = ?");
+        $sql->bindParam(1, $_POST["email"]);
+        $sql->execute();
         
-        $resultCon = $result;
-       
-        if (!$result->num_rows){
+        $resultCon = $sql;
+       // echo "Este es el resultado de la consulta";
+        // comprobamos si no existe el usuario
+        if ($sql->rowCount() == 0){
             $error_mail = "El usuario introducido no existe en al BD <br>";
         } else {
-            $datos=$result->fetchObject();
-            if ($datos->pass==$password){
+            $datos=$sql->fetch(PDO::FETCH_OBJ);
+            
+            // COMROBAMOS QUE LA CONTRASEÑA SEA CORRECTA
+            if ($datos->pass == $pass){
+                // CREAMOS COOKIE
+                setcookie("DNI", $datos->DNI);
                 setcookie("Nombre",$datos->Nombre);
                 setcookie("Apellidos",$datos->Apellidos);
                 
                 header("Location:index.php");
+                exit();
             }else{
                 $error_pass ="La contraseña es incorrecta <br>";
             }
@@ -36,7 +43,17 @@
     <form action="" method="POST">
     
         Email: <input type="text" name="email"><br>
-        Contraseña: <input type="text" name="pass"><br>
+        <?php 
+            if (isset($error_mail)){
+                echo "<span style='color:red'>$error_mail</span>";
+            }
+        ?>
+        Contraseña: <input type="password" name="pass"><br>
+         <?php 
+            if (isset($error_pass)){
+                echo "<span style='color:red'>$error_pass</span>";
+            }
+        ?>
         <input type="submit" name="entrar" value="Entrar"><br>
     
     </form>
